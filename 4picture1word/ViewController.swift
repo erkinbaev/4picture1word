@@ -67,21 +67,29 @@ class ViewController: UIViewController {
     }()
     
     let levels: [LevelModel] = [
-        LevelModel(firstImage: UIImage(named: "1")!, secondImage: UIImage(named: "1")!, thirdImage: UIImage(named: "1")!, fourthImage: UIImage(named: "1")!, correctAnswer: ["g","e","e", "k","t","e","c","h"], letters: ["f", "g", "c", "a", "e", "t", "e", "h", "e", "k"]),
-        LevelModel(firstImage: UIImage(named: "2")!, secondImage: UIImage(named: "2")!, thirdImage: UIImage(named: "2")!, fourthImage: UIImage(named: "2")!, correctAnswer: ["g","e","e", "k","t","e","c","h"], letters: ["f", "g", "c"]),
-        LevelModel(firstImage: UIImage(named: "3")!, secondImage: UIImage(named: "3")!, thirdImage: UIImage(named: "3")!, fourthImage: UIImage(named: "3")!, correctAnswer: ["g","e","e", "k","t","e","c","h"], letters: ["f", "g", "c"])
+        LevelModel(firstImage: UIImage(named: "1")!, secondImage: UIImage(named: "1")!, thirdImage: UIImage(named: "1")!, fourthImage: UIImage(named: "1")!, correctAnswer: ["g","e","e", "k","t","e","c","h"], letters: ["f", "g", "c", "a", "e", "t", "e", "h", "e", "k"], color: .cyan),
+        LevelModel(firstImage: UIImage(named: "2")!, secondImage: UIImage(named: "2")!, thirdImage: UIImage(named: "2")!, fourthImage: UIImage(named: "2")!, correctAnswer: ["g","e","e", "k","t","e","c","h"], letters: ["f", "g", "c"], color: .cyan),
+        LevelModel(firstImage: UIImage(named: "3")!, secondImage: UIImage(named: "3")!, thirdImage: UIImage(named: "3")!, fourthImage: UIImage(named: "3")!, correctAnswer: ["g","e","e", "k","t","e","c","h"], letters: ["f", "g", "c"], color: .cyan)
     ]
     
     var index = 0
     
     var word: [String] = []
     
-    var itemColor: UIColor = .cyan
+   // var selectedIndexs: IndexPath?
+    
+    var selectedItems: [UIColor] = []
+    
+    var bools: [Bool] = []
+    
+    var items: [Int] = []
 
-
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-       
+    
+        
         
         
         
@@ -159,6 +167,22 @@ class ViewController: UIViewController {
         wordCollectionView.reloadData()
     }
     
+    func colors() -> [UIColor] {
+        for _ in 1...levels[index].letters.count {
+            selectedItems.append(.cyan)
+        }
+        
+        return selectedItems
+    }
+    
+    func isClicks() -> [Bool] {
+        for _ in 1...levels[index].letters.count {
+            bools.append(false)
+        }
+        
+        return bools
+    }
+    
     
 }
 
@@ -180,7 +204,16 @@ extension ViewController: UICollectionViewDataSource {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "letterCell", for: indexPath) as! LetterCell
             
             cell.letterLabel.text = levels[index].letters[indexPath.row]
-            cell.backgroundColor = itemColor
+            cell.backgroundColor = colors()[indexPath.row]
+            cell.letterLabel.isHidden = isClicks()[indexPath.row]
+
+//            if indexPath == selectedIndexs {
+//                cell.backgroundColor = .white
+//                cell.letterLabel.isHidden = true
+//            } else {
+//                cell.backgroundColor = .cyan
+//                cell.letterLabel.isHidden = false
+//            }
            
             return cell
         } else {
@@ -207,9 +240,17 @@ extension ViewController: UICollectionViewDelegateFlowLayout {
             
             word.append(letter)
             
-            //itemColor = .white
-            
              wordCollectionView.reloadData()
+            
+          //  selectedIndexs = indexPath
+            
+            selectedItems[indexPath.row] = .white
+            
+            bools[indexPath.row] = true
+            
+            items.append(indexPath.row)
+            
+            lettersCollectionView.reloadData()
             
             if word == levels[index].correctAnswer {
                 print("Вы угадали!")
@@ -217,6 +258,18 @@ extension ViewController: UICollectionViewDelegateFlowLayout {
                 print("Вы не угадали!")
             }
         }
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, shouldHighlightItemAt indexPath: IndexPath) -> Bool {
+        if collectionView == lettersCollectionView {
+            for i in items {
+                if indexPath.row == i {
+                    return false
+                }
+            }
+        }
+        
+        return true
     }
 }
 

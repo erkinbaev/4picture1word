@@ -6,4 +6,5 @@ struct LevelModel {
     var fourthImage: UIImage
     var correctAnswer: [String]
     var letters: [String]
+    var color: UIColor
 }
